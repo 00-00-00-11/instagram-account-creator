@@ -1,6 +1,7 @@
-from modules import list_created_account
+from modules import list_created_accounts
 
-accounts = list_created_account.list_created_account()
 
-for a in accounts:
-    print("username {}\tpassword {}".format(a["username"], a["password"]))
+acc = list_created_accounts.list_created_accounts()
+print(
+    "\n".join(["Name: {} Password: {} Email: {}".format(*(i.values())) for i in acc])
+)
