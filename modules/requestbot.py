@@ -1,11 +1,14 @@
 """
 
 """
-import requests
-from modules.config import Config
-from modules.generateaccountinformation import new_account
 import json
 import re
+from time import sleep
+
+import requests
+
+from modules.config import Config
+from modules.generateaccountinformation import new_account
 from modules.storeusername import store
 
 
@@ -54,10 +57,10 @@ class CreateAccount:
         revised_list = [m1.replace("<td>", "") for m1 in matches]
         for socket_str in revised_list:
             self.sockets.append(socket_str[:-5].replace("</td>", ":"))
+        self.sockets = [{"http": "http://" + i, "https": "https://" + i} for i in self.sockets]
 
     def __collectcrsf(self):
         r = requests.get("https://instagram.com/accounts/emailsignup/")
-        print(r)
 
     # Account creation function
     def createaccount(self):
@@ -75,18 +78,30 @@ class CreateAccount:
         }
         if self.use_local_ip_address is True:
             request = requests.post(self.url, data=payload, headers=self.headers)
-            response = json.loads(request.text)
-        print(response)
-        try:
-            if response["account_created"] is False:
-                if response["errors"].get("password"):
-                    print(response["errors"]["password"][0])
-                    quit()
-                elif response["errors"].get("ip"):
-                    print(response["errors"]["ip"][0])
+        else:
+            try:
+                request = requests.post(self.url, data=payload, proxies=self.sockets.pop(0))
+            except requests.exceptions.ProxyError:
+                print("Proxy fail, retrying with new one...")
                 self.createaccount()
-        except Exception:
-            pass
+        try:
+            response = json.loads(request.text)
+        except ValueError:
+            print("JSON invalid, retrying... Status code was {}".format(request.status_code))
+            self.createaccount()
+        if not "account_created" in response:
+            print("Ratelimited. Retrying in 5...")
+            sleep(5)
+            self.createaccount()
+        if response["account_created"] is False:
+            if not response["errors"]:
+                print("Failed, Instagram pretends account exists.")
+            elif response["errors"].get("password"):
+                print(response["errors"]["password"][0])
+                quit()
+            elif response["errors"].get("ip"):
+                print(response["errors"]["ip"][0])
+            self.createaccount()
         else:
             store(payload)
 

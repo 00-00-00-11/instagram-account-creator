@@ -1,6 +1,6 @@
 from modules.config import Config
-from modules.seleniumbot import runbot
 from modules.requestbot import runBot
+from modules.seleniumbot import runbot
 
 
 def accountCreator():
@@ -9,5 +9,7 @@ def accountCreator():
     else:
         runBot()
 
-
-accountCreator()
+try:
+    accountCreator()
+except KeyboardInterrupt:
+    print("Exiting gracefully.")

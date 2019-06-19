@@ -3,22 +3,22 @@
     main function borcore
  """
 
-from time import sleep
+import logging
+import re
 from random import randint
+from time import sleep
 
-import modules.config as config
-
-# importing generated info
-import modules.generateaccountinformation as accnt
-from modules.storeusername import store
-from .activate_account import get_activation_url
-
+import requests
 # library import
 from selenium import webdriver
 from selenium.webdriver import ActionChains
-import requests
-import re
-import logging
+
+import modules.config as config
+# importing generated info
+import modules.generateaccountinformation as accnt
+from modules.storeusername import store
+
+from .activate_account import get_activation_url
 
 
 class AccountCreator:

@@ -1,5 +1,6 @@
-from .config import ASSET_DIR
 import logging
+
+from .config import ASSET_DIR
 
 
 def store(account):

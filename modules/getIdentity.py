@@ -1,6 +1,7 @@
-import mechanicalsoup
-import random
 import logging
+import random
+
+import mechanicalsoup
 
 
 def getRandomIdentity(country):

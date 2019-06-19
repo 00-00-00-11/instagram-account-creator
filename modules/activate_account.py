@@ -1,14 +1,13 @@
+import logging
 import re
 import time
-import logging
 
+from bs4 import BeautifulSoup
 # import sys
 # sys.path.insert(0, "/Users/matte/Projects/My/pymailutils")
-from pymailutils import Imap, Email
-from bs4 import BeautifulSoup
+from pymailutils import Email, Imap
 
 from .config import Config
-
 
 imaphost = Config["activation_email_serv"]
 imapport = Config["activation_email_spor"]

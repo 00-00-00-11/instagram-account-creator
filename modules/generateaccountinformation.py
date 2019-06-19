@@ -3,9 +3,9 @@
     this module contains followers generation
  """
 
+import logging
 import random
 import string
-import logging
 
 from .config import Config
 from .getIdentity import getRandomIdentity
