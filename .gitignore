@@ -1,5 +1,6 @@
 modules/confirm_with_email.py
 Assets/usernames*
+Assets/users*
 env/*
 *.pyc
 appunti.txt

@@ -1,9 +1,11 @@
-from .config import Config, ASSET_DIR
+from .config import ASSET_DIR
 import logging
-import pickle
+
 
 def store(account):
-    with open(ASSET_DIR + '/usernames.pkl', 'a+') as f:
-        logging.info("Storing username {}".format(account['username']))
-        logging.info(account)
-        pickle.dump(account, f, pickle.HIGHEST_PROTOCOL)
+    with open(ASSET_DIR + "/users.txt", "a+") as f:
+        u = account["username"]
+        p = account["password"]
+        e = account["email"]
+        logging.info("Storing username {}".format(u))
+        f.write(",".join([u, p, e]) + "\n")
