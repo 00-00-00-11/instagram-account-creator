@@ -1,13 +1,10 @@
-"""
-
-"""
 import json
 import re
 from time import sleep
 
 import requests
 
-from modules.config import Config
+from modules.config import Config, ASSET_DIR
 from modules.generateaccountinformation import new_account
 from modules.storeusername import store
 
@@ -23,6 +20,7 @@ class CreateAccount:
         numberofaccounts,
         use_custom_proxy,
         use_local_ip_address,
+        proxy_file_path
     ):
         self.sockets = []
         self.email = email
@@ -32,6 +30,7 @@ class CreateAccount:
         self.numberofaccounts = numberofaccounts
         self.use_custom_proxy = use_custom_proxy
         self.use_local_ip_address = use_local_ip_address
+        self.proxy_file_path = proxy_file_path
         self.url = "https://www.instagram.com/accounts/web_create_ajax/"
         self.headers = {
             "accept": "*/*",
@@ -52,11 +51,15 @@ class CreateAccount:
 
     # A function to fetch custom proxies
     def __collect_sockets(self):
-        r = requests.get("https://www.sslproxies.org/")
-        matches = re.findall(r"<td>\d+.\d+.\d+.\d+</td><td>\d+</td>", r.text)
-        revised_list = [m1.replace("<td>", "") for m1 in matches]
-        for socket_str in revised_list:
-            self.sockets.append(socket_str[:-5].replace("</td>", ":"))
+        if not self.use_custom_proxy:
+            r = requests.get("https://www.sslproxies.org/")
+            matches = re.findall(r"<td>\d+.\d+.\d+.\d+</td><td>\d+</td>", r.text)
+            revised_list = [m1.replace("<td>", "") for m1 in matches]
+            for socket_str in revised_list:
+                self.sockets.append(socket_str[:-5].replace("</td>", ":"))
+        else:
+            with open(self.proxy_file_path, "r") as f:
+                self.sockets = f.read().splitlines()
         self.sockets = [{"http": "http://" + i, "https": "https://" + i} for i in self.sockets]
 
     def __collectcrsf(self):
@@ -117,5 +120,6 @@ def runBot():
             Config["amount_of_account"],
             Config["use_custom_proxy"],
             Config["use_local_ip_address"],
+            Config["proxy_file_path"],
         )
         account.createaccount()
